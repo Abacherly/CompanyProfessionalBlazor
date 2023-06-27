@@ -1,0 +1,76 @@
+﻿@page "/professional"
+@page "/professional/{id:int}"
+
+@inject ICompanyProfessionalService CompanyProfessionalService
+
+@if (Id == null)
+{
+    <PageTitle>Create a Professional</PageTitle>
+    <h3>Create a Professional</h3>
+}
+else
+{
+    <PageTitle>Update @professional.Name</PageTitle>
+    <h3>Update @professional.Name</h3>
+}
+
+
+ <EditForm Model="professional" OnSubmit="HandleSubmit">
+    <div>
+        <label for="name">Name</label>
+        <InputText id="name" @bind-Value="professional.Name" class="form-control"></InputText>
+    </div>
+    <div>
+        <label for="age">Age</label>
+        <InputText id="age" @bind-Value="professional.Age" class="form-control"></InputText>
+    </div>
+    <div>
+        <label for="position">Position</label>
+        <InputText id="position" @bind-Value="professional.Position" class="form-control"></InputText>
+    </div>
+    <div>
+        <label>Place</label> <br />
+        <InputSelect @bind-Value="professional.PlaceId" class="form-select">
+            @foreach (var offer in CompanyProfessionalService.Places)
+            {
+                <option value="@offer.Id">@offer.Name</option>
+            }
+        </InputSelect>
+    </div>
+    <br />
+    <button type="submit" class="btn btn-primary">@btnText</button>
+    
+</EditForm>
+
+
+@code {
+
+    [Parameter] //primeira coisa a ser feita após os @pages e @inject, após fazer o @if, depois vai para 1°.razor cirar botão show
+    public int? Id { get; set; }
+
+    string btnText = string.Empty;
+
+    CompanyProfessional professional = new CompanyProfessional { Place = new Place() };
+
+    protected override async Task OnInitializedAsync() //após vai para o Service, implementar o "GetPlaces"
+    {
+        btnText = Id == null ? "Save Professional" : "Update Professional";
+        await CompanyProfessionalService.GetPlaces();
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (Id == null) //1° vem o CREATE A... depois preenche, depois cria <editform>, até o @btnText
+        {
+            //CREATE A...
+        }
+        else
+        {
+            professional = await CompanyProfessionalService.GetSingleProfessional((int)Id);
+        }
+    }
+    async void HandleSubmit()
+    {
+        
+    }
+}

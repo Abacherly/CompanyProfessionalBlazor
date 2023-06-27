@@ -1,0 +1,47 @@
+﻿@page "/companyprofessionals" 
+@inject ICompanyProfessionalService CompanyProfessionalService 
+@inject NavigationManager NavigationManager
+
+
+<h3>Company Professionals</h3> 
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Age</th>
+            <th>Position</th>
+            <th>Place</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var professional in CompanyProfessionalService.Professionals)
+        {
+            <tr>
+                <td>@professional.Name</td>
+                <td>@professional.Age</td>
+                <td>@professional.Position</td>
+                <td>@professional.Place.Name</td>
+                <td>
+                    <button class="btn btn-primary" @onclick="(() => ShowProfessional(professional.Id))"><i class="oi oi-pencil"></i></button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@code {
+    //1º fazer tabela com thead e tbody, criar Service
+    // 2° após o Get, fazer o @foreach do tbody e TESTAR e criar nova @page
+    //3° fazer o button do Show... e o NavigationManager, TESTAR, no service gerar SINGLE
+
+    protected override async Task OnInitializedAsync()
+    {
+        await CompanyProfessionalService.GetCompanyProfessionals();
+    }
+    void ShowProfessional(int id)
+    {
+        NavigationManager.NavigateTo($"/professional/{id}");
+    }
+}
